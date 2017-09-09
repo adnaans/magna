@@ -15,7 +15,7 @@ for i in range(1000):
     stringreturn = requests.get("http://danbooru.donmai.us/posts.json?tags=translated&limit=20&page=%d" % i)
     posts = stringreturn.json()
     for post in posts:
-        if(file_url in post)
+        if file_url in post
             imgurl = "http://danbooru.donmai.us" + post["file_url"]
             if ("png" in imgurl) or ("jpg" in imgurl):
                 count += 1
