@@ -29,20 +29,20 @@ class Inpaint():
 
     def train(self):
         data = glob(os.path.join("/imgs", "*.jpg"))
+        data_real = glob(os.path.join("/imgs-classes", "*.jpg"))
         for e in xrange(50):
             for i in range((len(data) / self.batch_size) - 1):
 
                 batch_files = data[i*self.batch_size:(i+1)*self.batch_size]
-                batch = [get_image(batch_file, 32, is_crop=True) for batch_file in batch_files]
+                batch = [get_image(batch_file) for batch_file in batch_files]
                 batch_images = np.array(batch).astype(np.float32)
-                batch_images += 1
-                batch_images /= 2
-                broken_images = np.copy(batch_images)
-                broken_images[:,16:16+32,16:16+32,:] = 0
 
-                dloss, _ = self.sess.run([self.d_loss, self.d_optim], feed_dict={self.images: batch_images, self.broken_images: broken_images})
-                gloss, _ = self.sess.run([self.g_loss, self.g_optim], feed_dict={self.images: batch_images, self.broken_images: broken_images})
-                print "%f, %f" % (dloss, gloss)
+                class_files = data_real[i*self.batch_size:(i+1)*self.batch_size]
+                classes = [get_image(cfile) for cfile in class_files]
+                class_images = np.array(classes).astype(np.float32)
+
+                loss, _ = self.sess.run([self.loss, self.optim], feed_dict={self.images: batch_images, self.classes: class_images})
+                print "%d %d, %f" % (e, i, loss)
                 if (i % 30 == 0) or (gloss > 10000):
                     fill = self.sess.run(self.genfull, feed_dict={self.images: batch_images, self.broken_images: broken_images})
                     ims("results/"+str(e*10000 + i)+".jpg",merge_color(fill,[8,8]))
