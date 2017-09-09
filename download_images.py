@@ -23,7 +23,7 @@ for i in range(1000):
             open_cv_image = np.array(i)
             img = open_cv_image[:, :, ::-1].copy()
             boolimage = np.zeros((int(img.shape[0]/32), int(img.shape[1]/32), 3))
-
+            print("%d %s" % (count, imgurl))
             notesall = requests.get("http://danbooru.donmai.us/notes.json?group_by=note&search[post_id]=%s" % post["id"]).json()
             for notes in notesall:
                 x = int(notes["x"])
