@@ -16,7 +16,7 @@ def login():
 @post('/pstimg') # or @route('/login', method='POST')
 def do_login():
     scan = request.files.get('scan')
-    print scan
+    #print scan
     img = cv2.imdecode(np.fromstring(scan.file.read(), np.uint8), cv2.IMREAD_UNCHANGED)
     # scan = '<img src="data:image/png;base64,{0}">'.format(scan)
     #img = img.rotate(180)
