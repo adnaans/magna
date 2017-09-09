@@ -23,7 +23,7 @@ for i in range(1000):
                 r = requests.get(imgurl)
                 i = Image.open(io.BytesIO(r.content)).convert('RGB')
                 open_cv_image = np.array(i)
-                img = open_cv_image[::2, ::2, ::-1].copy()
+                img = scipy.misc.imresize(open_cv_image, 0.5)
                 boolimage = np.zeros((int(img.shape[0]/16), int(img.shape[1]/16), 3))
                 print("%d %s" % (count, imgurl))
                 notesall = requests.get("http://danbooru.donmai.us/notes.json?group_by=note&search[post_id]=%s" % post["id"]).json()
@@ -33,9 +33,9 @@ for i in range(1000):
                     w = int(notes["width"])
                     h = int(notes["height"])
                     # cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
-                    boolimage[(y//16):((y+h)//16)+1, (x//16):((x+w)//16)+1, :] = 255;
+                    boolimage[(y//32):((y+h)//32)+1, (x//32):((x+w)//32)+1, :] = 255;
 
                 scipy.misc.imsave("imgs-classes/"+str(count)+"-b.jpg", boolimage)
-                scipy.misc.imsave("imgs/"+str(count)+".jpg", open_cv_image)
+                scipy.misc.imsave("imgs/"+str(count)+".jpg", img)
                 # cv2.imwrite("imgs/"+str(count)+".jpg", img)
                 # cv2.imwrite("imgs-classes/"+str(count)+"-b.jpg", boolimage)
