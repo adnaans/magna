@@ -6,13 +6,14 @@ import urllib
 from PIL import Image
 import io
 import scipy.misc
+import sys
 
 maxsize = 512
 
-count = 0
+count = int(sys.argv[1])*200
 
 for i in range(1000):
-    stringreturn = requests.get("http://danbooru.donmai.us/posts.json?tags=translated&limit=20&page=%d" % i)
+    stringreturn = requests.get("http://danbooru.donmai.us/posts.json?tags=translated&limit=200&page=%d" % (i+int(sys.argv[1]))
     posts = stringreturn.json()
     for post in posts:
         if "file_url" in post:
