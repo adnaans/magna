@@ -12,40 +12,44 @@ target = 'en'
 font_path = 'animeace.ttf'
 font = ImageFont.truetype(font_path, 16, encoding='unic')
 
-with io.open("a.png", 'rb') as image_file:
-    content = image_file.read()
+def translate(b64):
+    # with io.open("a.png", 'rb') as image_file:
+    #     content = image_file.read()
 
-image = types.Image(content=content)
-im = Image.open(io.BytesIO(content))
-draw = ImageDraw.Draw(im)
+    image = types.Image(content=b64)
+    im = Image.open(io.BytesIO(b64))
+    draw = ImageDraw.Draw(im)
 
-response = client.text_detection(image=image)
-texts = response.text_annotations
-print('Texts:')
+    response = client.text_detection(image=image)
+    texts = response.text_annotations
+    print('Texts:')
 
-for text in texts[:1]:
-    print('\n"{}"'.format(text.description.encode('utf-8')))
-    translation = translate_client.translate(
-        text.description.encode('utf-8'),
-        target_language=target)
-    translatedText=translation['translatedText']
+    for text in texts[:1]:
+        print('\n"{}"'.format(text.description.encode('utf-8')))
+        translation = translate_client.translate(
+            text.description.encode('utf-8'),
+            target_language=target)
+        translatedText=translation['translatedText']
 
-    vertices = ([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
-    draw.rectangle([
-        vertices[1][0]+10, vertices[1][1],
-        vertices[3][0], vertices[3][1]+10], 'white', None)
-    print('bounds: {}'.format(vertices))
-    maxwidth = abs(vertices[1][0] - vertices[3][0])+10;
-    maxheight = abs(vertices[1][1] - vertices[3][1])+10;
-    width, height = font.getsize(translatedText)
-    y_text = height
-    print(maxwidth/float(width)*len(translatedText))
+        vertices = ([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
+        draw.rectangle([
+            vertices[1][0]+10, vertices[1][1],
+            vertices[3][0], vertices[3][1]+10], 'white', None)
+        print('bounds: {}'.format(vertices))
+        maxwidth = abs(vertices[1][0] - vertices[3][0])+10;
+        maxheight = abs(vertices[1][1] - vertices[3][1])+10;
+        width, height = font.getsize(translatedText)
+        y_text = height
+        print(maxwidth/float(width)*len(translatedText))
 
-    lines = textwrap.wrap(translatedText, width=int(maxwidth/float(width)*len(translatedText))+1)
-    for line in lines:
-        print(line)
-        draw.text((vertices[0][0]-10, vertices[1][1] + y_text), line, font=font, fill="Black")
-        y_text += height+maxheight/len(lines)/2
+        lines = textwrap.wrap(translatedText, width=int(maxwidth/float(width)*len(translatedText))+1)
+        for line in lines:
+            print(line)
+            draw.text((vertices[0][0]-10, vertices[1][1] + y_text), line, font=font, fill="Black")
+            y_text += height+maxheight/len(lines)/2
 
+    buffer = io.BytesIO()
+    im.save(buffer, 'Png')
+    return buffer.getvalue()
 
-im.save('output-hint.jpg', 'Png')
+    # im.save('output-hint.jpg', 'Png')
