@@ -32,19 +32,20 @@ for text in texts[:1]:
 
     vertices = ([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
     draw.rectangle([
-        vertices[1][0], vertices[1][1],
-        vertices[3][0], vertices[3][1]], 'white', None)
+        vertices[1][0]+10, vertices[1][1],
+        vertices[3][0], vertices[3][1]+10], 'white', None)
     print('bounds: {}'.format(vertices))
-    maxwidth = abs(vertices[0][0] - vertices[2][0]);
+    maxwidth = abs(vertices[1][0] - vertices[3][0])+10;
+    maxheight = abs(vertices[1][1] - vertices[3][1])+10;
     width, height = font.getsize(translatedText)
     y_text = height
-    print(maxwidth,width,len(translatedText),(maxwidth/float(width)),maxwidth/float(width)*len(translatedText))
+    print(maxwidth/float(width)*len(translatedText))
 
-    lines = textwrap.wrap(translatedText, width=int(maxwidth/float(width)*len(translatedText)))
+    lines = textwrap.wrap(translatedText, width=int(maxwidth/float(width)*len(translatedText))+1)
     for line in lines:
         print(line)
-        draw.text((vertices[0][0], vertices[1][1] + y_text), line, font=font, fill="Black")
-        y_text += height
+        draw.text((vertices[0][0]-10, vertices[1][1] + y_text), line, font=font, fill="Black")
+        y_text += height+maxheight/len(lines)/2
 
 
 im.save('output-hint.jpg', 'Png')
