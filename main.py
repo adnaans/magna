@@ -26,10 +26,12 @@ class Inpaint():
         self.sess = tf.Session()
         self.sess.run(tf.initialize_all_variables())
 
+        self.saver = tf.Saver(max_to_keep=10)
+
 
     def train(self):
-        data = glob(os.path.join("/imgs", "*.jpg"))
-        data_real = glob(os.path.join("/imgs-classes", "*.jpg"))
+        data = sorted(glob(os.path.join("/imgs", "*.jpg")))
+        data_real = sorted(glob(os.path.join("/imgs-classes", "*.jpg")))
         for e in xrange(50):
             for i in range((len(data) / self.batch_size) - 1):
 
@@ -43,11 +45,8 @@ class Inpaint():
 
                 loss, _ = self.sess.run([self.loss, self.optim], feed_dict={self.images: batch_images, self.classes: class_images})
                 print "%d %d, %f" % (e, i, loss)
-                if (i % 30 == 0) or (gloss > 10000):
-                    fill = self.sess.run(self.genfull, feed_dict={self.images: batch_images, self.broken_images: broken_images})
-                    ims("results/"+str(e*10000 + i)+".jpg",merge_color(fill,[8,8]))
-                    ims("results/"+str(e*10000 + i)+"-base.jpg",merge_color(fill,[8,8]))
-
+                if i % 30 == 0:
+                    self.saver.save(sess, os.getcwd()+"/training/train",global_step=e*1000000 + i)
 
 
 model = Inpaint()
