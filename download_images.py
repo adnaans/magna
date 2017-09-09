@@ -12,12 +12,11 @@ maxsize = 512
 
 count = 0
 
-for i in xrange(1):
-    stringreturn = requests.get("http://danbooru.donmai.us/posts.json?tags=translated")
-    posts = stringreturn.json()[1:]
+for i in xrange(1000):
+    stringreturn = requests.get("http://danbooru.donmai.us/posts.json?tags=translated&limit=20&page=%d" % i)
+    posts = stringreturn.json()
     for post in posts:
         imgurl = "http://danbooru.donmai.us" + post["file_url"]
-        print imgurl
         if ("png" in imgurl) or ("jpg" in imgurl):
             count += 1
             r = requests.get(imgurl)
