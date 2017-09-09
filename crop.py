@@ -9,7 +9,7 @@ import json
 client = vision.ImageAnnotatorClient()
 translate_client = translate.Client()
 target = 'en'
-font_path = '/Users/huangfamily/Downloads/animeace/animeace.ttf'
+font_path = 'animeace.ttf'
 font = ImageFont.truetype(font_path, 16, encoding='unic')
 
 with io.open("a.png", 'rb') as image_file:
