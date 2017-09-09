@@ -14,19 +14,41 @@ def login():
     '''
 
 @post('/pstimg') # or @route('/login', method='POST')
-def do_login():
+def do_postimg():
     scan = request.files.get('scan')
-    print scan
+    #print scan
     img = cv2.imdecode(np.fromstring(scan.file.read(), np.uint8), cv2.IMREAD_UNCHANGED)
     # scan = '<img src="data:image/png;base64,{0}">'.format(scan)
     #img = img.rotate(180)
+    # print img
+    # for i in range(100,200):
+    #     for j in range(100, 200):
+    #         img[i][j][0]=255
+    #         img[i][j][1]=255
+    #         img[i][j][2]=255
+
+    # cutChar(img, [[(x1,y1),(x2,y2)]])
+
+    img = cutChar(img, [[(100,100),(300,300)]])
+
     scan = cv2.imencode(".png",img)[1]
-    bsixfour =  base64.b64encode(scan)
-    print bsixfour
+    bsixfour = base64.b64encode(scan)
+    #print bsixfour
     return '<img src="data:image/png;base64, '+bsixfour+'"/>'
     # print img_tag
     # #return rotatedscan;
     # return img_tag
+
+def cutChar(img, spots):
+    for corners in spots:
+        for i in range(corners[0][0],corners[1][0]):
+            for j in range(corners[0][1],corners[1][1]):
+                img[i][j][0]=255
+                img[i][j][1]=255
+                img[i][j][2]=255
+    
+    return img
+
 
 
 run(host='localhost', port=8080, debug=True)
