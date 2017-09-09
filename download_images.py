@@ -5,7 +5,7 @@ import requests
 import xml.etree.ElementTree as ET
 import urllib
 from PIL import Image
-from StringIO import StringIO
+import io
 import scipy.misc
 
 maxsize = 512
@@ -20,7 +20,7 @@ for i in xrange(1000):
         if ("png" in imgurl) or ("jpg" in imgurl):
             count += 1
             r = requests.get(imgurl)
-            i = Image.open(StringIO(r.content)).convert('RGB')
+            i = Image.open(io.StringIO(r.content)).convert('RGB')
             open_cv_image = np.array(i)
             img = open_cv_image[:, :, ::-1].copy()
             boolimage = np.zeros((img.shape[0]/32, img.shape[1]/32, 3))
