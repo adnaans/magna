@@ -32,9 +32,9 @@ for i in xrange(1):
                 y = int(notes["y"])
                 w = int(notes["width"])
                 h = int(notes["height"])
-                cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
+                # cv2.rectangle(img,(x,y),(x+w,y+h),(0,255,0),2)
                 boolimage[(y/32):((y+h)/32)+1, (x/32):((x+w)/32)+1, :] = 255;
 
             # scipy.misc.imsave("imgs/"+str(count)+"-b.jpg", boolimage)
             cv2.imwrite("imgs/"+str(count)+".jpg", img)
-            cv2.imwrite("imgs/"+str(count)+"-b.jpg", boolimage)
+            cv2.imwrite("imgs-classes/"+str(count)+"-b.jpg", boolimage)
