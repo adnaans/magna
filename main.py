@@ -124,7 +124,7 @@ class Inpaint():
                     # print("%d %d %d %d" % (minx, miny, maxx, maxy))
                     # print("%d %d %d %d" % (minx*32, miny*32, maxx*32, maxy*32))
                     cv2.rectangle(open_cv_image,(miny*32,minx*32),(maxy*32 + 32,maxx*32 + 32),(0,1,0),2)
-                    boxes.append((minx*32, miny*32, maxx*32 + 32, maxy*32 + 32))
+                    boxes.append((miny*32, minx*32, maxy*32 + 32, maxx*32 + 32))
                     groupnum += 1
 
             return boxes

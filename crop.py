@@ -21,15 +21,19 @@ def translate(b64):
     # image = types.Image(content=b64)
     im = Image.open(io.BytesIO(b64))
     im.save('temp2.png', 'png')
-    r = requests.post("http://74b75bb9.ngrok.io/upload", data={'image': base64.b64encode(b64)})
-    bounds = eval(r.text)
+    r = requests.get("http://localhost:8000/pic")
+    bounds = r.json()
+    print(bounds)
     draw = ImageDraw.Draw(im)
 
     # bounds = [([300,10],[400,200]),([450,500],[560,700]),([303,300],[376,472]),([230,345],[296,450]),([60,267],[120,380])]
+    c = 0
     for bound in bounds:
+        c += 1
         im2 = im.crop((bound[0], bound[1], bound[2], bound[3]))
         buffer = io.BytesIO()
         im2.save(buffer, 'png')
+        im2.save("k.png", "png")
         image = types.Image(content=buffer.getvalue())
         response = client.text_detection(image=image)
         texts = response.text_annotations
@@ -37,7 +41,7 @@ def translate(b64):
 
         for text in texts[:1]:
             print('"{}"'.format(text.description.encode('utf-8')))
-            r = requests.get("https://translation.googleapis.com/language/translate/v2?target=en&q={}&key={}".format(text.description.encode('utf-8'),'AIzaSyCkQTi_QOKR2L6UQiRaxvkAuz1VEf4yX0I'))
+            r = requests.get("https://translation.googleapis.com/language/translate/v2?target=en&source=ja&q={}&key={}".format(text.description.encode('utf-8'),'AIzaSyCkQTi_QOKR2L6UQiRaxvkAuz1VEf4yX0I'))
             translation = json.loads(r.content)
             print(translation)
             # translation = translate_client.translate(
