@@ -3,6 +3,9 @@ from PIL import Image
 import base64
 import cv2
 import numpy as np
+from crop import *
+import textwrap
+
 
 @get('/pstimg') # or @route('/login')
 def login():
@@ -17,7 +20,7 @@ def login():
 def do_postimg():
     scan = request.files.get('scan')
     #print scan
-    img = cv2.imdecode(np.fromstring(scan.file.read(), np.uint8), cv2.IMREAD_UNCHANGED)
+    # img = cv2.imdecode(np.fromstring(scan.file.read(), np.uint8), cv2.IMREAD_UNCHANGED)
     # scan = '<img src="data:image/png;base64,{0}">'.format(scan)
     #img = img.rotate(180)
     # print img
@@ -29,10 +32,10 @@ def do_postimg():
 
     # cutChar(img, [[(x1,y1),(x2,y2)]])
 
-    img = cutChar(img, [[(100,100),(300,300)]])
+    # img = cutChar(img, [[(100,100),(300,300)]])
 
-    scan = cv2.imencode(".png",img)[1]
-    bsixfour = base64.b64encode(scan)
+    # scan = cv2.imencode(".png",img)[1]
+    bsixfour = base64.b64encode(translate(scan.file.read()))
     #print bsixfour
     return '<img src="data:image/png;base64, '+bsixfour+'"/>'
     # print img_tag
@@ -41,12 +44,12 @@ def do_postimg():
 
 def cutChar(img, spots):
     for corners in spots:
-        for i in range(corners[0][0],corners[1][0]):
-            for j in range(corners[0][1],corners[1][1]):
+        for i in range(corners[0][1],corners[1][1]):
+            for j in range(corners[0][0],corners[1][0]):
                 img[i][j][0]=255
                 img[i][j][1]=255
                 img[i][j][2]=255
-    
+
     return img
 
 
