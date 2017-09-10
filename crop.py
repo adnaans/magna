@@ -12,7 +12,7 @@ target = 'en'
 font_path = 'animeace.ttf'
 font = ImageFont.truetype(font_path, 16, encoding='unic')
 
-with io.open("a.png", 'rb') as image_file:
+with io.open("imgs/5.jpg", 'rb') as image_file:
     content = image_file.read()
 
 image = types.Image(content=content)
