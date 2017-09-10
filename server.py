@@ -8,7 +8,6 @@ import textwrap
 import json
 
 
-
 @get('/pstimg') # or @route('/login')
 def login():
     return '''
@@ -39,9 +38,10 @@ def do_postimg():
     # img = cutChar(img, [[(100,100),(300,300)]])
 
     # scan = cv2.imencode(".png",img)[1]
+    
     bsixfour = base64.b64encode(translate(scan.file.read()))
     #print bsixfour
-    return '<img src="data:image/png;base64, '+str(bsixfour)+'"/>'
+    return '<img src="data:image/png;base64, '+base64.b64encode(scan.file.read())+'"/>'
     # print img_tag
     # #return rotatedscan;
     # return img_tag

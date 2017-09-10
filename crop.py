@@ -5,10 +5,8 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 import textwrap
 import json
+import base64
 import requests
-from main import Inpaint
-
-i = Inpaint()
 
 client = vision.ImageAnnotatorClient()
 translate_client = translate.Client()
@@ -23,7 +21,8 @@ def translate(b64):
     # image = types.Image(content=b64)
     im = Image.open(io.BytesIO(b64))
     im.save('temp2.png', 'png')
-    bounds = i.test()
+    r = requests.post("http://74b75bb9.ngrok.io/upload", data={'image': base64.b64encode(b64)})
+    bounds = eval(r.text)
     draw = ImageDraw.Draw(im)
 
     # bounds = [([300,10],[400,200]),([450,500],[560,700]),([303,300],[376,472]),([230,345],[296,450]),([60,267],[120,380])]
