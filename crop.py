@@ -5,50 +5,65 @@ from PIL import Image, ImageDraw, ImageFont
 import io
 import textwrap
 import json
+import requests
+from main import Inpaint
+
+# i = Inpaint()
 
 client = vision.ImageAnnotatorClient()
 translate_client = translate.Client()
 target = 'en'
 font_path = 'animeace.ttf'
-font = ImageFont.truetype(font_path, 16, encoding='unic')
+font = ImageFont.truetype(font_path, 8, encoding='unic')
 
 def translate(b64):
     # with io.open("a.png", 'rb') as image_file:
     #     content = image_file.read()
 
-    image = types.Image(content=b64)
+    # image = types.Image(content=b64)
     im = Image.open(io.BytesIO(b64))
+    im.save('temp2.png', 'png')
     draw = ImageDraw.Draw(im)
 
-    response = client.text_detection(image=image)
-    texts = response.text_annotations
-    print('Texts:')
+    # bounds = [([300,10],[400,200]),([450,500],[560,700]),([303,300],[376,472]),([230,345],[296,450]),([60,267],[120,380])]
+    for bound in bounds:
+        im2 = im.crop((bound[0], bound[1], bound[2], bound[3]))
+        buffer = io.BytesIO()
+        im2.save(buffer, 'png')
+        image = types.Image(content=buffer.getvalue())
+        response = client.text_detection(image=image)
+        texts = response.text_annotations
+        print('Texts:')
 
-    for text in texts[:1]:
-        print('\n"{}"'.format(text.description.encode('utf-8')))
-        translation = translate_client.translate(
-            text.description.encode('utf-8'),
-            target_language=target)
-        translatedText=translation['translatedText']
+        for text in texts[:1]:
+            print('"{}"'.format(text.description.encode('utf-8')))
+            r = requests.get("https://translation.googleapis.com/language/translate/v2?target=en&q={}&key={}".format(text.description.encode('utf-8'),'AIzaSyCkQTi_QOKR2L6UQiRaxvkAuz1VEf4yX0I'))
+            translation = json.loads(r.content)
+            print(translation)
+            # translation = translate_client.translate(
+            #     text.description.encode('utf-8'),
+            #     target_language=target)
+            translatedText=translation['data']['translations'][0]['translatedText']
 
-        vertices = ([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
-        draw.rectangle([
-            vertices[1][0]+10, vertices[1][1],
-            vertices[3][0], vertices[3][1]+10], 'white', None)
-        print('bounds: {}'.format(vertices))
-        maxwidth = abs(vertices[1][0] - vertices[3][0])+10;
-        maxheight = abs(vertices[1][1] - vertices[3][1])+10;
-        width, height = font.getsize(translatedText)
-        y_text = height
-        print(maxwidth/float(width)*len(translatedText))
+            vertices = ([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
+            # print(vertices[0][0]+bound[0][0], vertices[0][1]+bound[0][1],vertices[0][0]+bound[0][0]+abs(vertices[0][0]-vertices[2][0]), vertices[0][1]+bound[0][1]+abs(vertices[0][1]-vertices[2][1]))
+            draw.rectangle([
+                vertices[0][0]+bound[0][0]-5, vertices[0][1]+bound[0][1]-5,
+                vertices[0][0]+bound[0][0]+abs(vertices[0][0]-vertices[2][0])+5, vertices[0][1]+bound[0][1]+abs(vertices[0][1]-vertices[2][1])+5], 'white', None)
+            print('bounds: {}'.format(vertices))
+            maxwidth = abs(vertices[0][0] - vertices[2][0])+10;
+            maxheight = abs(vertices[0][1] - vertices[2][1])+10;
+            width, height = font.getsize(translatedText)
+            y_text = height
+            print(maxwidth/float(width)*len(translatedText))
 
-        lines = textwrap.wrap(translatedText, width=int(maxwidth/float(width)*len(translatedText))+1)
-        for line in lines:
-            print(line)
-            draw.text((vertices[0][0]-10, vertices[1][1] + y_text), line, font=font, fill="Black")
-            y_text += height+maxheight/len(lines)/2
+            lines = textwrap.wrap(translatedText, width=int(maxwidth/float(width)*len(translatedText))+1)
+            for line in lines:
+                print(line)
+                draw.text((vertices[0][0]+bound[0][0]-5, vertices[1][1] + bound[0][1]+ y_text), line.replace("&#39;","'"), font=font, fill="Black")
+                y_text += height+maxheight/len(lines)/2
 
     buffer = io.BytesIO()
-    im.save(buffer, 'Png')
+    im.save(buffer, 'png')
     return buffer.getvalue()
     # im.save('output-hint.jpg', 'Png')
