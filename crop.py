@@ -35,7 +35,8 @@ def translate(b64):
         im2.save(buffer, 'png')
         im2.save("k.png", "png")
         image = types.Image(content=buffer.getvalue())
-        response = client.text_detection(image=image)
+        # response = client.text_detection(image=image)
+        r = requests.post("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCkQTi_QOKR2L6UQiRaxvkAuz1VEf4yX0I", data = {"image": {"content": base64.b64encode(buffer.getvalue())},"features":[{"type": "TEXT_DETECTION"}]})
         texts = response.text_annotations
         print('Texts:')
 
