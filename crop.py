@@ -38,7 +38,7 @@ def translate(b64):
         # response = client.text_detection(image=image)
         r = requests.post("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCkQTi_QOKR2L6UQiRaxvkAuz1VEf4yX0I", data = json.dumps({"requests": [{"image": {"content": base64.b64encode(buffer.getvalue())},"features":[{"type": "TEXT_DETECTION"}]}]}))
         response = r.json()
-        if 'textAnnotations' in response['responses'][0]
+        if 'textAnnotations' in response['responses'][0]:
             print(response['responses'])
             texts = response['responses'][0]['textAnnotations']
         print('Texts:')
