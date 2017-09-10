@@ -49,8 +49,8 @@ def translate(b64):
             vertices = ([(vertex.x, vertex.y) for vertex in text.bounding_poly.vertices])
             # print(vertices[0][0]+bound[0][0], vertices[0][1]+bound[0][1],vertices[0][0]+bound[0][0]+abs(vertices[0][0]-vertices[2][0]), vertices[0][1]+bound[0][1]+abs(vertices[0][1]-vertices[2][1]))
             draw.rectangle([
-                vertices[0][0]+bound[0][0]-5, vertices[0][1]+bound[0][1]-5,
-                vertices[0][0]+bound[0][0]+abs(vertices[0][0]-vertices[2][0])+5, vertices[0][1]+bound[0][1]+abs(vertices[0][1]-vertices[2][1])+5], 'white', None)
+                vertices[0][0]+bound[0]-5, vertices[0][1]+bound[1]-5,
+                vertices[0][0]+bound[0]+abs(vertices[0][0]-vertices[2][0])+5, vertices[0][1]+bound[1]+abs(vertices[0][1]-vertices[2][1])+5], 'white', None)
             print('bounds: {}'.format(vertices))
             maxwidth = abs(vertices[0][0] - vertices[2][0])+10;
             maxheight = abs(vertices[0][1] - vertices[2][1])+10;
@@ -61,7 +61,7 @@ def translate(b64):
             lines = textwrap.wrap(translatedText, width=int(maxwidth/float(width)*len(translatedText))+1)
             for line in lines:
                 print(line)
-                draw.text((vertices[0][0]+bound[0][0]-5, vertices[1][1] + bound[0][1]+ y_text), line.replace("&#39;","'"), font=font, fill="Black")
+                draw.text((vertices[0][0]+bound[0]-5, vertices[1][1] + bound[1]+ y_text), line.replace("&#39;","'"), font=font, fill="Black")
                 y_text += height+maxheight/len(lines)/2
 
     buffer = io.BytesIO()
