@@ -3,6 +3,16 @@ import numpy as np
 import random
 import tensorflow as tf
 
+def get_image_fit(image_path):
+    im = imread(image_path)
+    new_width = ((im.shape[0] // 32)*32)
+    resize = scipy.misc.imresize(im, new_width/im.shape[0])
+    new_height = (((im.shape[1] // 32) + 1)*32)
+    res = np.ones((resize.shape[0], new_height, 3))
+    res[:resize.shape[0], :resize.shape[1], :] = resize
+    res = scipy.misc.imresize(res, (new_width,new_height))
+    res = transform(res)
+    return res
 
 def get_image(image_path):
     im = imread(image_path)
