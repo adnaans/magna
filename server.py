@@ -10,6 +10,8 @@ import textwrap
 @get('/pstimg') # or @route('/login')
 def login():
     return '''
+        <center><h1>Welcome to Karo!</h1></center>
+        <p>Upload a picture of a raw(untranslated) manga page and our servers will read, translate, and rewrite the page for you to read in English!</p>
         <form action="/pstimg" method="post" enctype="multipart/form-data">
             <input type="file" name="scan" accept="image/*">
             <input type="submit">
