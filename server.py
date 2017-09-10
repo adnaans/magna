@@ -41,7 +41,7 @@ def do_postimg():
     # scan = cv2.imencode(".png",img)[1]
     bsixfour = base64.b64encode(translate(scan.file.read()))
     #print bsixfour
-    return '<img src="data:image/png;base64, '+bsixfour+'"/>'
+    return '<img src="data:image/png;base64, '+str(bsixfour)+'"/>'
     # print img_tag
     # #return rotatedscan;
     # return img_tag
