@@ -8,7 +8,7 @@ import json
 import requests
 from main import Inpaint
 
-# i = Inpaint()
+i = Inpaint()
 
 client = vision.ImageAnnotatorClient()
 translate_client = translate.Client()
@@ -23,6 +23,7 @@ def translate(b64):
     # image = types.Image(content=b64)
     im = Image.open(io.BytesIO(b64))
     im.save('temp2.png', 'png')
+    bounds = i.test()
     draw = ImageDraw.Draw(im)
 
     # bounds = [([300,10],[400,200]),([450,500],[560,700]),([303,300],[376,472]),([230,345],[296,450]),([60,267],[120,380])]
