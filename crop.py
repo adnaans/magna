@@ -22,6 +22,7 @@ def translate(b64):
     im = Image.open(io.BytesIO(b64))
     im.save('temp2.png', 'png')
     r = requests.get("http://localhost:8000/pic")
+    print(r)
     bounds = r.json()
     print(bounds)
     draw = ImageDraw.Draw(im)
@@ -36,7 +37,9 @@ def translate(b64):
         im2.save("k.png", "png")
         # image = types.Image(content=buffer.getvalue())
         # response = client.text_detection(image=image)
-        r = requests.post("https://vision.googleapis.com/v1/images:annotate?key=AIzaSyCkQTi_QOKR2L6UQiRaxvkAuz1VEf4yX0I", data = json.dumps({"requests": [{"image": {"content": base64.b64encode(buffer.getvalue())},"features":[{"type": "TEXT_DETECTION"}]}]}))
+
+        #### PASTE GOOGLE VISION API KEY BELOW
+        r = requests.post("https://vision.googleapis.com/v1/images:annotate?key=PASTEGOOGLEVISIONKEYHERE", data = json.dumps({"requests": [{"image": {"content": base64.b64encode(buffer.getvalue())},"features":[{"type": "TEXT_DETECTION"}]}]}))
         response = r.json()
         if 'textAnnotations' in response['responses'][0]:
             print(response['responses'])
@@ -45,15 +48,30 @@ def translate(b64):
 
         for text in texts[:1]:
             print('"{}"'.format(text['description'].encode('utf-8')))
-            r = requests.get("https://translation.googleapis.com/language/translate/v2?target=en&source=ja&q={}&key={}".format(text['description'].encode('utf-8'),'AIzaSyCkQTi_QOKR2L6UQiRaxvkAuz1VEf4yX0I'))
+            #### PASTE GOOGLE TRANSLATE API KEY BELOW
+            r = requests.get("https://translation.googleapis.com/language/translate/v2?target=en&source=ja&q={}&key={}".format(text['description'].encode('utf-8'),'PASTEGOOGLETRANSLATEKEYHERE'))
             translation = json.loads(r.content)
             print(translation)
             # translation = translate_client.translate(
             #     text.description.encode('utf-8'),
             #     target_language=target)
             translatedText=translation['data']['translations'][0]['translatedText']
-            print(text['boundingPoly']['vertices'])
-            vertices = ([(vertex['x'], vertex['y']) for vertex in text['boundingPoly']['vertices']])
+            #print("vertices")
+            #print(text['boundingPoly']['vertices'])
+            vertices=([(vertex) for vertex in text['boundingPoly']['vertices']])
+            for integ in range(len(text['boundingPoly']['vertices'])-1):
+                #print(integ)
+                vertex = text['boundingPoly']['vertices'][integ]
+                #print("vertex")
+                #print(vertex)
+                if(not('x' in vertex)):
+                    vertices[integ]= (0, vertex['y'])
+                elif(not('y' in vertex)):
+                    vertices[integ]= (vertex['x'], 0)
+                else:
+                    vertices[integ] = (vertex['x'], vertex['y'])
+                #print(vertices)
+            # vertices = ([(vertex['x'], vertex['y']) for vertex in text['boundingPoly']['vertices']])
             # print(vertices[0][0]+bound[0][0], vertices[0][1]+bound[0][1],vertices[0][0]+bound[0][0]+abs(vertices[0][0]-vertices[2][0]), vertices[0][1]+bound[0][1]+abs(vertices[0][1]-vertices[2][1]))
             draw.rectangle([
                 vertices[0][0]+bound[0]-5, vertices[0][1]+bound[1]-5,

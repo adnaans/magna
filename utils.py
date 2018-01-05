@@ -5,7 +5,12 @@ import tensorflow as tf
 
 def get_image_fit(image_path):
     im = imread(image_path)
-    new_width = ((im.shape[0] // 32)*32)
+    new_width = float((im.shape[0] // 32)*32)
+    #print(" new width")
+    #print(new_width)
+    #print("im shape")
+    #print(im.shape[0])
+    #print(new_width/im.shape[0])
     resize = scipy.misc.imresize(im, new_width/im.shape[0])
     new_height = (((im.shape[1] // 32) + 1)*32)
     res = np.ones((resize.shape[0], new_height, 3))
